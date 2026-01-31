@@ -8,6 +8,7 @@ import com.obramat.order_api.repository.OrderRepository;
 import com.obramat.order_api.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -77,10 +78,11 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public List<OrderSummaryResponse> list() {
-        return orderRepository.findAll().stream()
+        return orderRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream()
                 .map(o -> new OrderSummaryResponse(o.getId(), o.getCreatedAt(), o.getStatus(), o.getTotalPrice()))
                 .toList();
     }
+
 
     @Transactional(readOnly = true)
     public OrderResponse get(Long id) {
