@@ -1,29 +1,29 @@
-# Technical Test — Obramat (Backend + Frontend)
+# Prueba técnica Obramat — Backend + Frontend
 
-Este repo tiene **dos partes**:
+Este repositorio tiene dos partes:
 
-- `backend/order-api` → API Spring Boot (productos + pedidos)
-- `frontend/` → Angular (pantalla para crear pedidos)
+- `backend/order-api`: API en Spring Boot (productos y pedidos)
+- `frontend`: app en Angular para crear pedidos desde una pantalla sencilla
 
-La idea es simple: **buscas productos**, los metes en un pedido, ajustas cantidades, ves el total (con IVA) y lo mandas al backend.
+La app permite buscar productos, añadirlos a un pedido, ajustar cantidades, ver el total (con IVA) y enviarlo al backend.
 
 ---
 
-## Cómo levantarlo todo (lo importante)
+## Cómo arrancarlo
 
-### 1) Backend (Spring Boot)
-En una terminal:
+### Backend
+Desde la carpeta del backend:
 
 ```bash
 cd backend/order-api
 ./mvnw spring-boot:run
 ```
 
-Backend en:
+Queda disponible en:
 - http://localhost:8080
 
-### 2) Frontend (Angular)
-En otra terminal:
+### Frontend
+En otra terminal, desde la carpeta del frontend:
 
 ```bash
 cd frontend
@@ -31,31 +31,33 @@ npm install
 npx ng serve -o
 ```
 
-Frontend en:
+Se abre en:
 - http://localhost:4200
 
-> Para que el buscador y el botón de crear pedido funcionen, el backend tiene que estar levantado.
+> Para que el buscador y “Crear pedido” funcionen, el backend debe estar levantado.
 
 ---
 
-## Demo rápida (lo que enseñaría en la entrevista)
+## Uso rápido (para comprobar que todo funciona)
 
-1) Entra a http://localhost:4200
-2) Escribe en “Buscar producto” (ej. `ce` o `pint`)
+1) Abre http://localhost:4200
+2) En “Buscar producto”, escribe algo como `ce` o `pint`
 3) Selecciona productos del desplegable
-4) Ajusta cantidades en la tabla
-5) Revisa neto / IVA (21%) / total
-6) Pulsa **Crear pedido**
-7) Te sale un mensaje de éxito y se vacía el carrito
+4) Cambia las cantidades en la tabla
+5) Comprueba neto / IVA (21%) / total
+6) Pulsa **Crear pedido** y verás un mensaje de confirmación
 
 ---
 
-## Ver la base de datos (H2 Console)
+## Base de datos (H2)
 
-La API usa **H2 en memoria** (una base de datos ligera para pruebas).
-Se borra al reiniciar el backend.
+El backend usa H2 en memoria (solo para esta prueba).
+Los datos se reinician cuando paras y vuelves a arrancar el backend.
 
-- Consola: http://localhost:8080/h2-console
+Consola:
+- http://localhost:8080/h2-console
+
+Credenciales:
 - JDBC URL: `jdbc:h2:mem:obramat`
 - User: `sa`
 - Password: *(vacío)*
@@ -70,11 +72,11 @@ SELECT * FROM order_detail ORDER BY id DESC;
 
 ---
 
-## Endpoints del backend (resumen)
+## Endpoints del backend
 
 ### Productos
 - `GET /api/products`
-- `GET /api/products?name=ce` (búsqueda parcial, sin importar mayúsculas/minúsculas)
+- `GET /api/products?name=ce` (búsqueda parcial, sin distinguir mayúsculas/minúsculas)
 
 ### Pedidos
 - `POST /api/orders`
@@ -87,57 +89,50 @@ SELECT * FROM order_detail ORDER BY id DESC;
 ## Tests
 
 ### Backend
-Desde `backend/order-api`:
 ```bash
+cd backend/order-api
 ./mvnw test
 ```
 
 ### Frontend
-Desde `frontend`:
 ```bash
+cd frontend
 npx ng test --watch=false
 ```
 
 ---
 
-## IVA (21%) y cómo se calculan los precios
+## IVA (21%) y precios
 
-La prueba pide IVA fijo del **21%**.
+La prueba pide un IVA fijo del 21%. Para que los pedidos sean consistentes, se ha usado esta convención:
 
-Para no liarme (y para que los pedidos no cambien “por arte de magia” si mañana cambia el precio de un producto), he usado esta convención:
+- `Product.price`: precio neto (sin IVA)
+- `OrderDetail.unitPrice`: precio neto “guardado” al crear el pedido (snapshot)
+- `Order.totalPrice`: total bruto (con IVA)
 
-- `Product.price` → **neto (sin IVA)**
-- `OrderDetail.unitPrice` → **neto (sin IVA) “fotografiado”** al crear el pedido (snapshot)
-- `Order.totalPrice` → **bruto (con IVA)**
+Cálculo:
+- Subtotal por línea (neto) = `unitPrice * quantity`
+- Neto del pedido = suma de subtotales
+- Total (con IVA) = redondeo a 2 decimales de `neto * 1.21`
 
-Reglas:
-- Subtotal línea (neto) = `unitPrice * quantity`
-- Neto pedido = suma de subtotales
-- Total (con IVA) = `round(neto * 1.21, 2)` usando **BigDecimal** en backend
-
-En la UI muestro:
-- Neto
-- IVA (21%)
-- Total
-
-(El backend sigue siendo la fuente de verdad del total guardado).
+En el frontend se muestran neto, IVA y total, pero el valor que se guarda y se devuelve como total del pedido es el del backend.
 
 ---
 
-## Cosas “extra” que metí porque ayudan (sin pasarse)
+## Detalles que se han cuidado
 
-- Validaciones y errores consistentes (400/404 con mensaje claro)
-- Evitar N+1 en el detalle del pedido (fetch join)
-- Ordenación de pedidos por fecha desc
-- CORS para que Angular (4200) pueda llamar al backend (8080)
-- Tests: integración en backend + unitarios sencillos en frontend (cálculo de totales)
+- Validaciones y mensajes de error claros (400/404)
+- Carga del detalle de pedido evitando problemas típicos de N+1 (fetch join)
+- Ordenación de pedidos por fecha descendente
+- CORS configurado para que Angular (4200) pueda llamar al backend (8080)
+- Tests de integración en backend y tests unitarios sencillos en frontend (cálculo de totales)
 
 ---
 
-## Estructura del repo
+## Estructura
 
 ```
-backend/order-api     # Spring Boot API
-frontend/             # Angular app
+backend/order-api
+frontend
 README.md
 ```
