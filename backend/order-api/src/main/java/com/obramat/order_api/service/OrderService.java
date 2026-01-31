@@ -86,7 +86,7 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public OrderResponse get(Long id) {
-        Order order = orderRepository.findById(id)
+        Order order = orderRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new NotFoundException("Pedido no encontrado: id=" + id));
         return toResponse(order);
     }
