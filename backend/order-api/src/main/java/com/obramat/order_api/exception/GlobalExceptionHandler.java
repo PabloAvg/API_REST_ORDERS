@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,12 +24,22 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiError> validation(MethodArgumentNotValidException ex, HttpServletRequest req) {
-        String msg = ex.getBindingResult().getAllErrors().stream()
-                .map(err -> err.getDefaultMessage())
+        public ResponseEntity<ApiError> validation(MethodArgumentNotValidException ex, HttpServletRequest req) {
+
+            String fieldErrors = ex.getBindingResult().getFieldErrors().stream()
+                .map(fe -> fe.getField() + ": " + fe.getDefaultMessage())
                 .collect(Collectors.joining("; "));
-        return build(HttpStatus.BAD_REQUEST, msg, req.getRequestURI());
-    }
+
+            String globalErrors = ex.getBindingResult().getGlobalErrors().stream()
+                .map(oe -> oe.getObjectName() + ": " + oe.getDefaultMessage())
+                .collect(Collectors.joining("; "));
+
+            String msg = Stream.of(fieldErrors, globalErrors)
+                .filter(s -> s != null && !s.isBlank())
+                .collect(Collectors.joining("; "));
+
+            return build(HttpStatus.BAD_REQUEST, msg, req.getRequestURI());
+        }
 
     private ResponseEntity<ApiError> build(HttpStatus status, String message, String path) {
         return ResponseEntity.status(status).body(

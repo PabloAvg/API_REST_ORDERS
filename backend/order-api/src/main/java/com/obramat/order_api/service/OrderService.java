@@ -33,15 +33,20 @@ public class OrderService {
     public OrderResponse create(CreateOrderRequest request) {
         // Validación extra: evitar productId duplicados en el mismo pedido
         Set<Long> seen = new HashSet<>();
+        Set<Long> duplicates = new HashSet<>();
         for (CreateOrderItemRequest item : request.items()) {
             if (!seen.add(item.productId())) {
-                throw new BadRequestException("Producto duplicado en el pedido: productId=" + item.productId());
+                duplicates.add(item.productId());
             }
+        }
+        if (!duplicates.isEmpty()) {
+            // i.e Productos duplicados en el pedido: [1, 4]
+            throw new BadRequestException("Productos duplicados en el pedido: " + duplicates);
         }
 
         Order order = new Order();
         order.setCreatedAt(Instant.now());
-        order.setStatus(OrderStatus.PENDING); // requisito
+        order.setStatus(OrderStatus.PENDING);
 
         BigDecimal netTotal = BigDecimal.ZERO;
 
