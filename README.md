@@ -1,4 +1,4 @@
-# Prueba técnica Obramat — Backend + Frontend
+# Prueba técnica retail — Backend + Frontend
 
 Este repositorio tiene dos partes:
 
@@ -58,7 +58,7 @@ Consola:
 - http://localhost:8080/h2-console
 
 Credenciales:
-- JDBC URL: `jdbc:h2:mem:obramat`
+- JDBC URL: `jdbc:h2:mem:retail`
 - User: `sa`
 - Password: *(vacío)*
 
