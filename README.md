@@ -1,48 +1,44 @@
-# Retail Orders — Full‑stack demo (Spring Boot + Angular)
+# Retail Orders demo full stack
 
-**Live demo (frontend):** https://pabloavg.github.io/API_REST_ORDERS/
-**API (backend):** https://api-rest-orders.onrender.com
-**Repo:** https://github.com/PabloAvg/API_REST_ORDERS
+Live demo frontend
+https://pabloavg.github.io/API_REST_ORDERS/
 
-> **Nota sobre la demo:** el backend está desplegado en **Render (plan free)**. Si lleva un rato sin uso, puede “dormirse” y la **primera petición tarda ~30–60s** (cold start). Después, las siguientes van rápidas.
+API backend
+https://api-rest-orders.onrender.com
+
+Repo
+https://github.com/PabloAvg/API_REST_ORDERS
+
+Nota sobre la demo
+El backend está en Render en plan gratis. Si lleva un rato sin uso, la primera petición puede tardar alrededor de 30 a 60 segundos. Después va rápido.
 
 ---
 
 ## Qué hace
-- Buscar productos por nombre (búsqueda parcial, sin distinguir mayúsculas/minúsculas).
-- Añadir productos a un pedido, cambiar cantidades, eliminar líneas.
-- Ver **Neto / IVA (21%) / Total** en tiempo real.
-- Enviar el pedido al backend y persistirlo (H2 en memoria).
+- Buscar productos por nombre con búsqueda parcial y sin distinguir mayúsculas
+- Añadir productos a un pedido, cambiar cantidades y eliminar líneas
+- Mostrar neto, IVA 21 y total en tiempo real
+- Crear el pedido en el backend
 
 ---
 
-## Cómo probarlo rápido
-1) Abre la **Live demo**: https://pabloavg.github.io/API_REST_ORDERS/
-2) Espera la primera carga si Render está “despierto”.
-3) Escribe `ce` o `pint` en “Buscar producto”, añade líneas, cambia cantidades y pulsa **Crear pedido**.
-
----
-
-## Endpoints principales
-### Productos
-- `GET /api/products`
-- `GET /api/products?name=ce`
-
-### Pedidos
-- `POST /api/orders`
-- `GET /api/orders`
-- `GET /api/orders/{id}`
-- `DELETE /api/orders/{id}`
+## Probarlo online
+1. Abre la live demo
+2. Escribe ce o pint en el buscador
+3. Añade productos y ajusta cantidades
+4. Pulsa crear pedido y revisa el resumen
 
 ---
 
 ## Ejecutar en local
+
 ### Backend
 ```bash
 cd backend/order-api
 ./mvnw spring-boot:run
 ```
-API en: http://localhost:8080
+API en
+http://localhost:8080
 
 ### Frontend
 ```bash
@@ -50,50 +46,32 @@ cd frontend
 npm install
 npx ng serve -o
 ```
-App en: http://localhost:4200
-
-> Para que el buscador y “Crear pedido” funcionen en local, el backend debe estar levantado.
-
----
-
-## Despliegue (resumen)
-- **Frontend**: GitHub Pages (build Angular con `--base-href "/API_REST_ORDERS/"`).
-- **Backend**: Render (Web Service).
+App en
+http://localhost:4200
 
 ---
 
-## Postman
-- Collection: `postman/retail.postman_collection.json`
-- (Opcional) Environment: `postman/retail.postman_environment.json`
+## Endpoints
+Productos
+- GET /api/products
+- GET /api/products?name=ce
 
-Variable `baseUrl`:
-- Local: `http://localhost:8080`
-- Render: `https://api-rest-orders.onrender.com`
-
----
-
-## IVA (21%) y precios
-Convención usada para mantener consistencia histórica:
-
-- `Product.price`: **neto** (sin IVA).
-- `OrderDetail.unitPrice`: **neto** “capturado” al crear el pedido (snapshot).
-- `Order.totalPrice`: **bruto** (con IVA) redondeado a 2 decimales.
-
-Cálculo:
-- Subtotal línea (neto) = `unitPrice * quantity`
-- Neto pedido = suma subtotales
-- Total (con IVA) = `round(neto * 1.21, 2)`
+Pedidos
+- POST /api/orders
+- GET /api/orders
+- GET /api/orders/{id}
+- DELETE /api/orders/{id}
 
 ---
 
 ## Tests
-### Backend
+Backend
 ```bash
 cd backend/order-api
 ./mvnw test
 ```
 
-### Frontend
+Frontend
 ```bash
 cd frontend
 npx ng test --watch=false
@@ -101,8 +79,41 @@ npx ng test --watch=false
 
 ---
 
-## H2 (solo local)
-Consola: http://localhost:8080/h2-console
-- JDBC URL: `jdbc:h2:mem:retail`
-- User: `sa`
-- Password: *(vacío)*
+## Postman
+- Colección: postman/retail.postman_collection.json
+- Entorno: postman/retail.postman_environment.json
+
+Variable baseUrl
+- Local: http://localhost:8080
+- Render: https://api-rest-orders.onrender.com
+
+---
+
+## IVA y precios
+Convención usada para mantener consistencia histórica
+- Product.price es precio neto sin IVA
+- OrderDetail.unitPrice es precio neto guardado al crear el pedido
+- Order.totalPrice es total bruto con IVA redondeado a 2 decimales
+
+Cálculo
+- Subtotal línea neto = unitPrice por quantity
+- Neto pedido = suma de subtotales
+- Total con IVA = redondeo de neto por 1.21 a 2 decimales
+
+---
+
+## Decisiones técnicas
+- Separación por capas en backend con controller, service y repository
+- DTOs separados de entidades para no exponer el modelo JPA
+- Validaciones en request de pedidos y mensajes de error claros en 400 y 404
+- Cálculo monetario con BigDecimal y redondeo comercial a 2 decimales
+- Carga de detalle de pedidos con fetch join para evitar problemas de lazy loading
+- Frontend con servicios para HTTP, modelos tipados y util de dinero para cálculos
+- CORS configurado para local y para la demo en Pages
+
+---
+
+## Limitaciones
+- Render puede tardar en la primera carga por el modo reposo del plan gratis
+- H2 es en memoria, los datos se reinician al reiniciar el backend
+- No hay autenticación ni persistencia real, no se pedía para la prueba
