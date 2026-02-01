@@ -102,6 +102,26 @@ npx ng test --watch=false
 
 ---
 
+## Postman
+
+He incluido una colección de Postman para probar rápidamente la API.
+
+- Collection: `postman/API_REST_ORDERS.postman_collection.json`
+- (Opcional) Environment: `postman/API_REST_ORDERS.postman_environment.json`
+
+### Cómo importarlo
+1. Abre Postman.
+2. Import → selecciona la collection `.json`.
+3. (Opcional) Import → selecciona el environment `.json`.
+4. Selecciona el environment y ejecuta las requests.
+
+### Variables
+- `baseUrl`:
+  - Local: `http://localhost:8080`
+  - Render: `https://api-rest-orders.onrender.com`
+
+---
+
 ## IVA (21%) y precios
 
 La prueba pide un IVA fijo del 21%. Para que los pedidos sean consistentes, se ha usado esta convención:
