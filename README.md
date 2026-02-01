@@ -106,8 +106,8 @@ npx ng test --watch=false
 
 He incluido una colección de Postman para probar rápidamente la API.
 
-- Collection: `postman/API_REST_ORDERS.postman_collection.json`
-- (Opcional) Environment: `postman/API_REST_ORDERS.postman_environment.json`
+- Collection: `postman/retail.postman_collection.json`
+- (Opcional) Environment: `postman/retail.postman_environment.json`
 
 ### Cómo importarlo
 1. Abre Postman.
