@@ -36,9 +36,16 @@ jobs:
 
       - run: npx ng build --configuration production --base-href "/API_REST_ORDERS/"
 
+      - name: Inspect dist
+        run: |
+            echo "=== dist/frontend ==="
+            ls -la dist/frontend || true
+            echo "=== find index.html ==="
+            find dist -maxdepth 4 -name index.html -print || true
+
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: frontend/dist/frontend
+          path: frontend/dist/frontend/browser
 
   deploy:
     runs-on: ubuntu-latest
