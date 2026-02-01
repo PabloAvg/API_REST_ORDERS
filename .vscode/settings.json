@@ -1,3 +1,23 @@
 {
-    "svn.ignoreMissingSvnWarning": true
+    "svn.ignoreMissingSvnWarning": true,
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#fb8989",
+        "activityBar.background": "#fb8989",
+        "activityBar.foreground": "#15202b",
+        "activityBar.inactiveForeground": "#15202b99",
+        "activityBarBadge.background": "#c1fdc1",
+        "activityBarBadge.foreground": "#15202b",
+        "commandCenter.border": "#15202b99",
+        "sash.hoverBorder": "#fb8989",
+        "statusBar.background": "#fa5858",
+        "statusBar.foreground": "#15202b",
+        "statusBarItem.hoverBackground": "#f92626",
+        "statusBarItem.remoteBackground": "#fa5858",
+        "statusBarItem.remoteForeground": "#15202b",
+        "titleBar.activeBackground": "#fa5858",
+        "titleBar.activeForeground": "#15202b",
+        "titleBar.inactiveBackground": "#fa585899",
+        "titleBar.inactiveForeground": "#15202b99"
+    },
+    "peacock.color": "#fa5858"
 }

@@ -11,8 +11,8 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
                 // Angular dev server (por defecto)
-                .allowedOrigins("http://localhost:4200")
-                .allowedMethods("GET", "POST", "DELETE", "OPTIONS")
+                .allowedOrigins("http://localhost:4200", "https://pabloavg.github.io")
+                .allowedMethods("GET", "POST", "DELETE")
                 .allowedHeaders("*")
                 .allowCredentials(false)
                 .maxAge(3600);
